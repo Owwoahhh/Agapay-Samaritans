@@ -72,19 +72,29 @@
       throw error;
     }
   }
-  let state = load();
+  let state = clone(initialState);
+  let saveQueue = Promise.resolve();
   const store = {
     get state() {
       return state;
     },
     save() {
-      try {
-        localStorage.setItem(KEY, JSON.stringify(state));
-      } catch {
-        throw new Error(
-          "Could not save data to this browser. Check available local storage space and privacy settings."
-        );
-      }
+      const snapshot = clone(state);
+      saveQueue = saveQueue.catch(() => {}).then(async () => {
+        const response = await fetch("/api/state", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ state: snapshot }),
+        });
+        if (!response.ok) {
+          const result = await response.json().catch(() => ({}));
+          throw new Error(result.error || `Database save failed (${response.status}).`);
+        }
+      });
+      saveQueue.catch((error) =>
+        showToast(error.message || "Could not save data to PostgreSQL.", true)
+      );
+      return saveQueue;
     },
     reset() {
       state.donors = [];
@@ -1403,6 +1413,24 @@
   });
   async function initialize() {
     try {
+      const response = await fetch("/api/state");
+      if (!response.ok) {
+        const result = await response.json().catch(() => ({}));
+        throw new Error(result.error || `Could not load PostgreSQL data (${response.status}).`);
+      }
+      const { state: savedState } = await response.json();
+      if (savedState) {
+        if (
+          savedState.version !== 2 ||
+          !Array.isArray(savedState.users) ||
+          !Array.isArray(savedState.donations) ||
+          !Array.isArray(savedState.donors)
+        )
+          throw new Error("PostgreSQL contains invalid application data.");
+        state = savedState;
+      } else {
+        state = load();
+      }
       const previousBootstrap = state.users.find(
         (user) => user.demoAccount && user.email === "admin@agapay.local"
       );
@@ -1430,10 +1458,9 @@
             passwordChangedAt: "",
           },
         ];
-        store.save();
       }
       state.currentUser = null;
-      store.save();
+      await store.save();
       if (localStorage.getItem(LEGACY_KEY)) localStorage.removeItem(LEGACY_KEY);
       populateDonorOptions();
       $("#donation-date").max = todayString();

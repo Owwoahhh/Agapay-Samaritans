@@ -63,9 +63,9 @@
             Sign in <span aria-hidden="true">→</span>
           </button>
           <p class="footer-copy">
-            This system stores accounts and records on this device only. Local browser sign-in is
-            not secure organizational authentication. Do not enter real donor or financial
-            information.
+            This local prototype stores accounts and records in PostgreSQL on this computer.
+            Browser-based sign-in is not secure organizational authentication. Do not enter real
+            donor or financial information.
           </p>
         </form>
       </div>
@@ -80,8 +80,7 @@
             alt="Agapay Samaritans logo"
           /><span
             ><span class="brand-name">Agapay Samaritans</span
-            ><span class="brand-caption">Giving portal</span></span
-          ></a
+            ></a
         >
         <p class="nav-label">Workspace</p>
         <nav class="nav-links" aria-label="Workspace">
@@ -140,7 +139,7 @@
             <div class="page-head">
               <div>
                 <div class="eyebrow" data-today></div>
-                <h1 id="dashboard-title">Good day, <span data-dashboard-first-name></span> 👋</h1>
+                <h1 id="dashboard-title">Good day, <span data-dashboard-first-name></span></h1>
                 <p class="page-subtitle">Here is your donation and acknowledgment overview.</p>
               </div>
               <a href="#donations" class="btn btn-primary">＋ Record donation</a>
@@ -822,8 +821,8 @@
               <span class="badge badge-neutral" data-count="audit"></span>
             </div>
             <div class="notice page-notice">
-              <strong>Local-only audit trail.</strong> Entries are stored in this browser and are
-              not tamper-proof records.
+              <strong>Prototype audit trail.</strong> Entries are stored in the local database and
+              are not tamper-proof records.
             </div>
             <div class="toolbar">
               <div class="search-wrap">
@@ -892,13 +891,13 @@
               </form>
             </section>
             <section class="panel settings-panel section-gap">
-              <div class="panel-title">Local records &amp; storage</div>
-              <p class="panel-subtitle">All records are stored in this browser only.</p>
+              <div class="panel-title">PostgreSQL records &amp; storage</div>
+              <p class="panel-subtitle">Records are stored in the local PostgreSQL database.</p>
               <div class="setting-row">
                 <div>
-                  <div class="setting-title">Locally saved records</div>
+                  <div class="setting-title">Database records</div>
                   <div class="setting-desc">
-                    Donors, donations, and receipts are entered by users and saved in this browser.
+                    Donors, donations, receipts, users, and settings are saved by the local API.
                   </div>
                 </div>
                 <span class="badge badge-verified">Enabled</span>
@@ -916,9 +915,9 @@
                 </button>
               </div>
               <div class="notice warning settings-warning">
-                <strong>Local storage limitation.</strong> Information is stored in this browser
-                only. It is not a secure shared database, is not synchronized across devices, and is
-                not suitable for real financial records or personally identifiable donor data.
+                <strong>Local prototype limitation.</strong> PostgreSQL persistence does not add
+                secure authentication, server-side role checks, backups, or safe multi-user updates.
+                Do not expose this API to the internet or use it for real donor or financial data.
               </div>
             </section>
             <section class="panel settings-panel section-gap">
@@ -957,7 +956,7 @@
           </section>
 
           <p class="footer-note">
-            Agapay Samaritans prototype · Local browser records only · No live bank or email
+            Agapay Samaritans prototype · Local PostgreSQL · No live bank or email
             connections
           </p>
         </main>
